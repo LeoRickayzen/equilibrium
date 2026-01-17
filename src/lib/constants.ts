@@ -44,7 +44,7 @@ export const DEFAULT_INPUTS = {
   serviceChargeIncrease: "5",
   isFirstTimeBuyer: true,
   isAdditionalProperty: false,
-  renovationCost: "25000",
+  renovationCost: "5000",
   renovationReturn: "0",
   legalConveyancingSurveyCost: "1750",
   estateAgentFeesPercent: "1.5",

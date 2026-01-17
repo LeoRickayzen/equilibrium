@@ -21,6 +21,11 @@ export default function Home() {
         {/* Left side - Inputs */}
         <div className="w-full md:w-1/4 overflow-y-auto border-b md:border-b-0 md:border-r border-zinc-200 dark:border-zinc-800">
           <div className="p-8">
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
+              <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                This calculator is for illustrative purposes only. The numbers and calculations may be inaccurate and should not be relied upon for financial decisions. This is not financial advice.
+              </p>
+            </div>
             <h1 className="mb-2 text-3xl font-bold text-black dark:text-zinc-50">
               Rent or Buy Calculator
             </h1>

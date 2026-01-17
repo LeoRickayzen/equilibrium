@@ -18,7 +18,9 @@ export default function DataTable({ headers, rows, maxHeight = "225px", classNam
             {headers.map((header, index) => (
               <th
                 key={index}
-                className="px-4 py-2 text-left font-medium text-zinc-700 dark:text-zinc-300"
+                className={`px-4 py-2 font-medium text-zinc-700 dark:text-zinc-300 ${
+                  index === 0 ? "text-left" : "text-right"
+                }`}
               >
                 {header}
               </th>

@@ -1,0 +1,466 @@
+import type { YearlyRow, SpreadsheetInputs } from "./types";
+import { calculateMonthlyMortgagePayment } from "./mortgage";
+
+// ============================================================================
+// Helper Interfaces
+// ============================================================================
+
+interface InitialMortgageDetails {
+  loanAmount: number;
+  monthlyMortgagePayment: number | null;
+  adjustedPropertyPrice: number;
+  monthlyInterestRate: number;
+  isBoughtOutright: boolean;
+}
+
+interface YearlyRentAndServiceCharge {
+  monthlyRent: number;
+  monthlyServiceCharge: number;
+}
+
+interface YearlySavingsResult {
+  monthlySavings: number;
+  cumulativeSavings: number;
+  cumulativeSavingsWithAppreciation: number;
+}
+
+interface SavingsParams {
+  monthlyRent: number;
+  monthlyServiceCharge: number;
+  monthlyMortgagePayment: number | null;
+  previousCumulativeSavings: number;
+  previousCumulativeSavingsWithAppreciation: number;
+  investmentAppreciationBuying: number;
+}
+
+interface YearlyMortgagePayments {
+  principalPaid: number;
+  interestPaid: number;
+  newMortgageBalance: number;
+}
+
+interface YearlyPropertyValue {
+  propertyValue: number;
+  equityInProperty: number;
+}
+
+interface PropertyValueParams {
+  adjustedPropertyPrice: number;
+  propertyAppreciation: number;
+  mortgageBalance: number;
+  stampDuty: number;
+  renovationCost: number;
+  legalConveyancingSurveyCost: number;
+  estateAgentFeesPercent: number;
+  year: number;
+}
+
+interface YearlyComparisonValues {
+  sizeOfEquityBuying: number;
+  sizeOfEquityIfInvested: number;
+  difference: number;
+  winner: "buy" | "rent";
+}
+
+interface SpreadsheetState {
+  mortgageBalance: number;
+  cumulativeSavings: number;
+  cumulativeSavingsWithAppreciation: number;
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Calculates inflation multiplier for a given year
+ */
+function calculateInflationMultiplier(
+  inflationRate: number,
+  year: number
+): number {
+  return Math.pow(1 + inflationRate / 100, year - 1);
+}
+
+/**
+ * Validates spreadsheet inputs
+ */
+function validateSpreadsheetInputs(inputs: SpreadsheetInputs): boolean {
+  return (
+    inputs.propertyPrice > 0 &&
+    inputs.downPayment >= 0 &&
+    inputs.interestRate >= 0 &&
+    inputs.mortgageLength > 0 &&
+    inputs.timeInProperty > 0 &&
+    inputs.rentPcm > 0 &&
+    inputs.rentInflation >= 0 &&
+    inputs.serviceCharge >= 0 &&
+    inputs.serviceChargeIncrease >= 0
+  );
+}
+
+/**
+ * Calculates initial mortgage details
+ */
+function calculateInitialMortgageDetails(
+  inputs: SpreadsheetInputs
+): InitialMortgageDetails {
+  const {
+    propertyPrice,
+    downPayment,
+    interestRate,
+    mortgageLength,
+    renovationCost,
+    renovationReturn,
+    legalConveyancingSurveyCost,
+  } = inputs;
+
+  // Calculate loan amount (legal costs and renovation costs reduce available savings)
+  const availableSavings = Math.max(0, downPayment - legalConveyancingSurveyCost - renovationCost);
+  const loanAmount = Math.max(0, propertyPrice - availableSavings);
+
+  // Calculate monthly mortgage payment
+  const monthlyMortgagePayment = calculateMonthlyMortgagePayment(
+    loanAmount,
+    interestRate,
+    mortgageLength
+  );
+
+  // Renovation return increases property value
+  const renovationValue = renovationCost * (renovationReturn / 100);
+  const adjustedPropertyPrice = propertyPrice + renovationValue;
+
+  const monthlyInterestRate = interestRate / 100 / 12;
+  const isBoughtOutright = loanAmount <= 0 || monthlyMortgagePayment === null;
+
+  return {
+    loanAmount,
+    monthlyMortgagePayment,
+    adjustedPropertyPrice,
+    monthlyInterestRate,
+    isBoughtOutright,
+  };
+}
+
+/**
+ * Calculates rent and service charge for a given year
+ */
+function calculateYearlyRentAndServiceCharge(
+  inputs: SpreadsheetInputs,
+  year: number
+): YearlyRentAndServiceCharge {
+  const { rentPcm, rentInflation, serviceCharge, serviceChargeIncrease } = inputs;
+
+  const rentMultiplier = calculateInflationMultiplier(rentInflation, year);
+  const monthlyRent = rentPcm * rentMultiplier;
+
+  const serviceChargeMultiplier = calculateInflationMultiplier(
+    serviceChargeIncrease,
+    year
+  );
+  const serviceChargeAnnualForYear = serviceCharge * serviceChargeMultiplier;
+  const monthlyServiceCharge = serviceChargeAnnualForYear / 12;
+
+  return {
+    monthlyRent,
+    monthlyServiceCharge,
+  };
+}
+
+/**
+ * Calculates yearly savings and updates cumulative values
+ */
+function calculateYearlySavings(params: SavingsParams): YearlySavingsResult {
+  const {
+    monthlyRent,
+    monthlyServiceCharge,
+    monthlyMortgagePayment,
+    previousCumulativeSavings,
+    previousCumulativeSavingsWithAppreciation,
+    investmentAppreciationBuying,
+  } = params;
+
+  const mortgagePayment = monthlyMortgagePayment ?? 0;
+  const monthlySavings = monthlyRent - mortgagePayment - monthlyServiceCharge;
+
+  const cumulativeSavings = previousCumulativeSavings + monthlySavings * 12;
+
+  let cumulativeSavingsWithAppreciation: number;
+  if (investmentAppreciationBuying > 0) {
+    const monthlyRateBuying = investmentAppreciationBuying / 100 / 12;
+    // Previous cumulative savings with appreciation grows for 12 months
+    cumulativeSavingsWithAppreciation =
+      previousCumulativeSavingsWithAppreciation *
+      Math.pow(1 + monthlyRateBuying, 12);
+
+    // Add this year's monthly savings with appreciation
+    for (let month = 1; month <= 12; month++) {
+      const monthsRemaining = 12 - month + 1;
+      cumulativeSavingsWithAppreciation +=
+        monthlySavings * Math.pow(1 + monthlyRateBuying, monthsRemaining);
+    }
+  } else {
+    cumulativeSavingsWithAppreciation = cumulativeSavings;
+  }
+
+  return {
+    monthlySavings,
+    cumulativeSavings,
+    cumulativeSavingsWithAppreciation,
+  };
+}
+
+/**
+ * Calculates yearly mortgage payments (principal and interest)
+ */
+function calculateYearlyMortgagePayments(
+  mortgageBalance: number,
+  monthlyMortgagePayment: number | null,
+  monthlyInterestRate: number,
+  isBoughtOutright: boolean
+): YearlyMortgagePayments {
+  let principalPaid = 0;
+  let interestPaid = 0;
+  let newMortgageBalance = mortgageBalance;
+
+  if (!isBoughtOutright && monthlyMortgagePayment !== null) {
+    let currentBalance = mortgageBalance;
+
+    for (let month = 1; month <= 12; month++) {
+      if (currentBalance <= 0) break;
+
+      const interestPayment = currentBalance * monthlyInterestRate;
+      const principalPayment = monthlyMortgagePayment - interestPayment;
+
+      currentBalance = Math.max(0, currentBalance - principalPayment);
+      principalPaid += principalPayment;
+      interestPaid += interestPayment;
+    }
+
+    newMortgageBalance = currentBalance;
+  }
+
+  return {
+    principalPaid,
+    interestPaid,
+    newMortgageBalance,
+  };
+}
+
+/**
+ * Calculates property value and equity for a given year
+ */
+function calculateYearlyPropertyValue(
+  params: PropertyValueParams
+): YearlyPropertyValue {
+  const {
+    adjustedPropertyPrice,
+    propertyAppreciation,
+    mortgageBalance,
+    stampDuty,
+    renovationCost,
+    legalConveyancingSurveyCost,
+    estateAgentFeesPercent,
+    year,
+  } = params;
+
+  const propertyValue =
+    adjustedPropertyPrice * Math.pow(1 + propertyAppreciation / 100, year);
+  const estateAgentFees = propertyValue * (estateAgentFeesPercent / 100);
+  const equityInProperty =
+    propertyValue -
+    mortgageBalance -
+    stampDuty -
+    renovationCost -
+    legalConveyancingSurveyCost -
+    estateAgentFees;
+
+  return {
+    propertyValue,
+    equityInProperty,
+  };
+}
+
+/**
+ * Calculates investment value for renting scenario
+ */
+function calculateYearlyInvestmentValue(
+  downPayment: number,
+  investmentAppreciationRenting: number,
+  year: number
+): number {
+  return downPayment * Math.pow(1 + investmentAppreciationRenting / 100, year);
+}
+
+/**
+ * Calculates comparison values between buying and renting
+ */
+function calculateYearlyComparison(
+  equityInProperty: number,
+  cumulativeSavingsWithAppreciation: number,
+  investmentValue: number
+): YearlyComparisonValues {
+  const sizeOfEquityBuying = equityInProperty + cumulativeSavingsWithAppreciation;
+  const sizeOfEquityIfInvested = investmentValue;
+  const difference = sizeOfEquityBuying - sizeOfEquityIfInvested;
+  const winner: "buy" | "rent" = difference >= 0 ? "buy" : "rent";
+
+  return {
+    sizeOfEquityBuying,
+    sizeOfEquityIfInvested,
+    difference,
+    winner,
+  };
+}
+
+/**
+ * Builds a single yearly row
+ */
+function buildYearlyRow(
+  year: number,
+  monthlyMortgagePayment: number | null,
+  mortgageBalance: number,
+  principalPaid: number,
+  interestPaid: number,
+  monthlyRent: number,
+  monthlyServiceCharge: number,
+  monthlySavings: number,
+  cumulativeSavings: number,
+  cumulativeSavingsWithAppreciation: number,
+  propertyValue: number,
+  equityInProperty: number,
+  investmentValue: number,
+  comparison: YearlyComparisonValues
+): YearlyRow {
+  return {
+    year,
+    monthlyMortgagePayment,
+    mortgageBalance,
+    principalPaid,
+    interestPaid,
+    monthlyRent,
+    monthlyServiceCharge,
+    monthlySavings,
+    cumulativeSavings,
+    cumulativeSavingsWithAppreciation,
+    propertyValue,
+    equityInProperty,
+    investmentValue,
+    sizeOfEquityBuying: comparison.sizeOfEquityBuying,
+    sizeOfEquityIfInvested: comparison.sizeOfEquityIfInvested,
+    difference: comparison.difference,
+    winner: comparison.winner,
+  };
+}
+
+// ============================================================================
+// Main Spreadsheet Builder
+// ============================================================================
+
+/**
+ * Builds the complete spreadsheet in a single pass
+ * This consolidates all calculations to eliminate duplication
+ */
+export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
+  // Validation
+  if (!validateSpreadsheetInputs(inputs)) {
+    return [];
+  }
+
+  // Calculate initial mortgage details
+  const mortgageDetails = calculateInitialMortgageDetails(inputs);
+  const {
+    loanAmount,
+    monthlyMortgagePayment,
+    adjustedPropertyPrice,
+    monthlyInterestRate,
+    isBoughtOutright,
+  } = mortgageDetails;
+
+  // Initialize state
+  const state: SpreadsheetState = {
+    mortgageBalance: loanAmount,
+    cumulativeSavings: 0,
+    cumulativeSavingsWithAppreciation: 0,
+  };
+
+  const rows: YearlyRow[] = [];
+
+  // Build rows for each year
+  for (let year = 1; year <= inputs.timeInProperty; year++) {
+    // Calculate rent and service charge
+    const { monthlyRent, monthlyServiceCharge } =
+      calculateYearlyRentAndServiceCharge(inputs, year);
+
+    // Calculate savings
+    const savingsResult = calculateYearlySavings({
+      monthlyRent,
+      monthlyServiceCharge,
+      monthlyMortgagePayment,
+      previousCumulativeSavings: state.cumulativeSavings,
+      previousCumulativeSavingsWithAppreciation:
+        state.cumulativeSavingsWithAppreciation,
+      investmentAppreciationBuying: inputs.investmentAppreciationBuying,
+    });
+    state.cumulativeSavings = savingsResult.cumulativeSavings;
+    state.cumulativeSavingsWithAppreciation =
+      savingsResult.cumulativeSavingsWithAppreciation;
+
+    // Calculate mortgage payments
+    const mortgagePayments = calculateYearlyMortgagePayments(
+      state.mortgageBalance,
+      monthlyMortgagePayment,
+      monthlyInterestRate,
+      isBoughtOutright
+    );
+    state.mortgageBalance = mortgagePayments.newMortgageBalance;
+
+    // Calculate property value and equity
+    const propertyValue = calculateYearlyPropertyValue({
+      adjustedPropertyPrice,
+      propertyAppreciation: inputs.propertyAppreciation,
+      mortgageBalance: state.mortgageBalance,
+      stampDuty: inputs.stampDuty,
+      renovationCost: inputs.renovationCost,
+      legalConveyancingSurveyCost: inputs.legalConveyancingSurveyCost,
+      estateAgentFeesPercent: inputs.estateAgentFeesPercent,
+      year,
+    });
+
+    // Calculate investment value
+    const investmentValue = calculateYearlyInvestmentValue(
+      inputs.downPayment,
+      inputs.investmentAppreciationRenting,
+      year
+    );
+
+    // Calculate comparison
+    const comparison = calculateYearlyComparison(
+      propertyValue.equityInProperty,
+      state.cumulativeSavingsWithAppreciation,
+      investmentValue
+    );
+
+    // Build and add row
+    const row = buildYearlyRow(
+      year,
+      monthlyMortgagePayment,
+      state.mortgageBalance,
+      mortgagePayments.principalPaid,
+      mortgagePayments.interestPaid,
+      monthlyRent,
+      monthlyServiceCharge,
+      savingsResult.monthlySavings,
+      state.cumulativeSavings,
+      state.cumulativeSavingsWithAppreciation,
+      propertyValue.propertyValue,
+      propertyValue.equityInProperty,
+      investmentValue,
+      comparison
+    );
+
+    rows.push(row);
+  }
+
+  return rows;
+}

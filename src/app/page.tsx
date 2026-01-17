@@ -23,15 +23,12 @@ export default function Home() {
           <div className="p-8">
             <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-900/20">
               <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                This calculator is for illustrative purposes only. The numbers and calculations may be inaccurate and should not be relied upon for financial decisions. This is not financial advice.
+                This calculator is for illustrative purposes only. The numbers and calculations may be inaccurate and should not be relied upon for financial decisions. This is not financial advice or a recommendation to rent or buy a property. You should consult a qualified financial advisor before making any financial decisions. The author accepts no liability for any loss or damage resulting from the use of this tool.
               </p>
             </div>
-            <h1 className="mb-2 text-3xl font-bold text-black dark:text-zinc-50">
+            <h1 className="mb-8 text-3xl font-bold text-black dark:text-zinc-50">
               Rent or Buy Calculator
             </h1>
-            <p className="mb-8 text-zinc-600 dark:text-zinc-400">
-              Enter your financial details to compare renting vs buying
-            </p>
 
             <div className="space-y-6">
               <InputField

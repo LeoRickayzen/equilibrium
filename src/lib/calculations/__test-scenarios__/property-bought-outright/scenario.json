@@ -32,11 +32,11 @@
       "cumulativeSavings": 7600,
       "cumulativeSavingsWithAppreciation": 7809.011013348542,
       "propertyValue": 204000,
-      "equityInProperty": 187440,
+      "equityInProperty": 197440,
       "investmentValue": 226600,
-      "sizeOfEquityBuying": 195249.01101334853,
+      "sizeOfEquityBuying": 205249.01101334853,
       "sizeOfEquityIfInvested": 226600,
-      "difference": -31350.98898665147,
+      "difference": -21350.98898665147,
       "winner": "rent"
     },
     {
@@ -51,11 +51,11 @@
       "cumulativeSavings": 15388,
       "cumulativeSavingsWithAppreciation": 16210.71612315481,
       "propertyValue": 208080,
-      "equityInProperty": 191458.8,
+      "equityInProperty": 201458.8,
       "investmentValue": 233398,
-      "sizeOfEquityBuying": 207669.5161231548,
+      "sizeOfEquityBuying": 217669.5161231548,
       "sizeOfEquityIfInvested": 233398,
-      "difference": -25728.48387684519,
+      "difference": -15728.483876845188,
       "winner": "rent"
     },
     {
@@ -70,11 +70,11 @@
       "cumulativeSavings": 23367.64,
       "cumulativeSavingsWithAppreciation": 25239.178789531696,
       "propertyValue": 212241.60000000003,
-      "equityInProperty": 195557.97600000002,
+      "equityInProperty": 205557.97600000002,
       "investmentValue": 240399.94,
-      "sizeOfEquityBuying": 220797.15478953172,
+      "sizeOfEquityBuying": 230797.15478953172,
       "sizeOfEquityIfInvested": 240399.94,
-      "difference": -19602.785210468282,
+      "difference": -9602.785210468282,
       "winner": "rent"
     },
     {
@@ -89,11 +89,11 @@
       "cumulativeSavings": 31542.569199999998,
       "cumulativeSavingsWithAppreciation": 34930.214676873235,
       "propertyValue": 216486.432,
-      "equityInProperty": 199739.13552,
+      "equityInProperty": 209739.13552,
       "investmentValue": 247611.93820000003,
-      "sizeOfEquityBuying": 234669.35019687325,
+      "sizeOfEquityBuying": 244669.35019687325,
       "sizeOfEquityIfInvested": 247611.93820000003,
-      "difference": -12942.588003126788,
+      "difference": -2942.588003126788,
       "winner": "rent"
     },
     {
@@ -108,12 +108,12 @@
       "cumulativeSavings": 39916.441276,
       "cumulativeSavingsWithAppreciation": 45321.4764460342,
       "propertyValue": 220816.16064000002,
-      "equityInProperty": 204003.9182304,
+      "equityInProperty": 214003.9182304,
       "investmentValue": 255040.29634600002,
-      "sizeOfEquityBuying": 249325.39467643423,
+      "sizeOfEquityBuying": 259325.39467643423,
       "sizeOfEquityIfInvested": 255040.29634600002,
-      "difference": -5714.901669565792,
-      "winner": "rent"
+      "difference": 4285.098330434208,
+      "winner": "buy"
     },
     {
       "year": 6,
@@ -127,11 +127,11 @@
       "cumulativeSavings": 48492.909264279995,
       "cumulativeSavingsWithAppreciation": 56452.5424821458,
       "propertyValue": 225232.4838528,
-      "equityInProperty": 208353.996595008,
+      "equityInProperty": 218353.996595008,
       "investmentValue": 262691.50523638004,
-      "sizeOfEquityBuying": 264806.5390771538,
+      "sizeOfEquityBuying": 274806.5390771538,
       "sizeOfEquityIfInvested": 262691.50523638004,
-      "difference": 2115.0338407737436,
+      "difference": 12115.033840773744,
       "winner": "buy"
     },
     {
@@ -146,11 +146,11 @@
       "cumulativeSavings": 57275.6200297084,
       "cumulativeSavingsWithAppreciation": 68365.00973450326,
       "propertyValue": 229737.13352985602,
-      "equityInProperty": 212791.07652690817,
+      "equityInProperty": 222791.07652690817,
       "investmentValue": 270572.25039347145,
-      "sizeOfEquityBuying": 281156.08626141143,
+      "sizeOfEquityBuying": 291156.08626141143,
       "sizeOfEquityIfInvested": 270572.25039347145,
-      "difference": 10583.835867939983,
+      "difference": 20583.835867939983,
       "winner": "buy"
     },
     {
@@ -165,11 +165,11 @@
       "cumulativeSavings": 66268.20829247465,
       "cumulativeSavingsWithAppreciation": 81102.59085259867,
       "propertyValue": 234331.87620045315,
-      "equityInProperty": 217316.89805744635,
+      "equityInProperty": 227316.89805744635,
       "investmentValue": 278689.4179052756,
-      "sizeOfEquityBuying": 298419.488910045,
+      "sizeOfEquityBuying": 308419.488910045,
       "sizeOfEquityIfInvested": 278689.4179052756,
-      "difference": 19730.071004769416,
+      "difference": 29730.071004769416,
       "winner": "buy"
     },
     {
@@ -184,11 +184,11 @@
       "cumulativeSavings": 75474.29018621764,
       "cumulativeSavingsWithAppreciation": 94711.21581032587,
       "propertyValue": 239018.51372446222,
-      "equityInProperty": 221933.2360185953,
+      "equityInProperty": 231933.2360185953,
       "investmentValue": 287050.1004424339,
-      "sizeOfEquityBuying": 316644.45182892116,
+      "sizeOfEquityBuying": 326644.45182892116,
       "sizeOfEquityIfInvested": 287050.1004424339,
-      "difference": 29594.35138648725,
+      "difference": 39594.35138648725,
       "winner": "buy"
     },
     {
@@ -203,11 +203,11 @@
       "cumulativeSavings": 84897.45631902135,
       "cumulativeSavingsWithAppreciation": 109239.13821866819,
       "propertyValue": 243798.88399895147,
-      "equityInProperty": 226641.9007389672,
+      "equityInProperty": 236641.9007389672,
       "investmentValue": 295661.6034557069,
-      "sizeOfEquityBuying": 335881.0389576354,
+      "sizeOfEquityBuying": 345881.0389576354,
       "sizeOfEquityIfInvested": 295661.6034557069,
-      "difference": 40219.4355019285,
+      "difference": 50219.4355019285,
       "winner": "buy"
     }
   ]

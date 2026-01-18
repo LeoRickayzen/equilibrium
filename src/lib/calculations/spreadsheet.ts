@@ -49,7 +49,6 @@ interface PropertyValueParams {
   propertyAppreciation: number;
   mortgageBalance: number;
   stampDuty: number;
-  renovationCost: number;
   legalConveyancingSurveyCost: number;
   estateAgentFeesPercent: number;
   year: number;
@@ -126,7 +125,7 @@ function calculateInitialMortgageDetails(
     mortgageLength
   );
 
-  // Renovation return increases property value
+  // Renovation return increases property value (and this value will appreciate over time)
   const renovationValue = renovationCost * (renovationReturn / 100);
   const adjustedPropertyPrice = propertyPrice + renovationValue;
 
@@ -258,7 +257,6 @@ function calculateYearlyPropertyValue(
     propertyAppreciation,
     mortgageBalance,
     stampDuty,
-    renovationCost,
     legalConveyancingSurveyCost,
     estateAgentFeesPercent,
     year,
@@ -267,11 +265,15 @@ function calculateYearlyPropertyValue(
   const propertyValue =
     adjustedPropertyPrice * Math.pow(1 + propertyAppreciation / 100, year);
   const estateAgentFees = propertyValue * (estateAgentFeesPercent / 100);
+  
+  // The renovation return value is already included in propertyValue through adjustedPropertyPrice
+  // and has appreciated over time. The renovation cost was already deducted from available savings
+  // when calculating the loan amount, so we don't need to subtract it again here.
+  
   const equityInProperty =
     propertyValue -
     mortgageBalance -
     stampDuty -
-    renovationCost -
     legalConveyancingSurveyCost -
     estateAgentFees;
 
@@ -421,7 +423,6 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
       propertyAppreciation: inputs.propertyAppreciation,
       mortgageBalance: state.mortgageBalance,
       stampDuty: inputs.stampDuty,
-      renovationCost: inputs.renovationCost,
       legalConveyancingSurveyCost: inputs.legalConveyancingSurveyCost,
       estateAgentFeesPercent: inputs.estateAgentFeesPercent,
       year,

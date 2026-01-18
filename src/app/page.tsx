@@ -1,10 +1,13 @@
 "use client";
 
+import { useMemo } from "react";
 import { useCalculatorForm } from "@/hooks/useCalculatorForm";
 import { useCalculator } from "@/hooks/computation/useCalculator";
 import { useRenovationCostValidation } from "@/hooks/useRenovationCostValidation";
 import InputField from "@/components/InputField";
 import Results from "@/components/Results";
+import { calculateRenovationValueAdded, calculateFinalPropertyValue } from "@/lib/propertyValueCalculations";
+import { formatCurrency } from "@/lib/formatting";
 
 export default function Home() {
   const { inputs, updateInput, getParsedInputs } = useCalculatorForm();
@@ -14,6 +17,48 @@ export default function Home() {
   // Renovation cost validation
   const { error: renovationCostError, handleChange: handleRenovationCostChange } =
     useRenovationCostValidation(inputs, updateInput);
+
+  // Calculate helper text values
+  const renovationHelperText = useMemo(() => {
+    const renovationCost = parseFloat(inputs.renovationCost) || 0;
+    const renovationReturn = parseFloat(inputs.renovationReturn) || 0;
+    
+    if (renovationCost > 0 && renovationReturn > 0) {
+      const valueAdded = calculateRenovationValueAdded(renovationCost, renovationReturn);
+      return `Renovation adds ${formatCurrency(valueAdded)} in value to the property`;
+    }
+    return undefined;
+  }, [inputs.renovationCost, inputs.renovationReturn]);
+
+  const propertyAppreciationHelperText = useMemo(() => {
+    const propertyPrice = parseFloat(inputs.propertyPrice) || 0;
+    const renovationCost = parseFloat(inputs.renovationCost) || 0;
+    const renovationReturn = parseFloat(inputs.renovationReturn) || 0;
+    const propertyAppreciation = parseFloat(inputs.propertyAppreciation) || 0;
+    const timeInProperty = parseFloat(inputs.timeInProperty) || 0;
+    
+    if (propertyPrice > 0 && timeInProperty > 0) {
+      const finalValue = calculateFinalPropertyValue(
+        propertyPrice,
+        renovationCost,
+        renovationReturn,
+        propertyAppreciation,
+        timeInProperty
+      );
+      return (
+        <>
+          Property sells for <span className="font-bold">{formatCurrency(finalValue)}</span> using renovation return and appreciation
+        </>
+      );
+    }
+    return undefined;
+  }, [
+    inputs.propertyPrice,
+    inputs.renovationCost,
+    inputs.renovationReturn,
+    inputs.propertyAppreciation,
+    inputs.timeInProperty,
+  ]);
 
   return (
     <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
@@ -114,6 +159,7 @@ export default function Home() {
                 onChange={(value) => updateInput("propertyAppreciation", value)}
                 placeholder="Enter annual property appreciation %"
                 step="0.1"
+                helperText={propertyAppreciationHelperText}
               />
 
               <InputField
@@ -170,6 +216,7 @@ export default function Home() {
                 onChange={handleRenovationCostChange}
                 placeholder="Enter renovation cost"
                 error={renovationCostError}
+                helperText={renovationHelperText}
               />
 
               <InputField

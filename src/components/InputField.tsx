@@ -10,6 +10,7 @@ interface InputFieldProps {
   placeholder?: string;
   required?: boolean;
   error?: string;
+  helperText?: React.ReactNode;
 }
 
 const inputClassName =
@@ -25,6 +26,9 @@ const labelClassName =
 const errorClassName =
   "mt-1 text-sm text-red-600 dark:text-red-400";
 
+const helperTextClassName =
+  "mt-1 text-sm text-zinc-600 dark:text-zinc-400";
+
 export default function InputField({
   id,
   label,
@@ -35,6 +39,7 @@ export default function InputField({
   placeholder,
   required = false,
   error,
+  helperText,
 }: InputFieldProps) {
   const inputClass = error
     ? `${inputClassName} ${inputClassNameError}`
@@ -56,6 +61,7 @@ export default function InputField({
         className={inputClass}
       />
       {error && <p className={errorClassName}>{error}</p>}
+      {helperText && !error && <p className={helperTextClassName}>{helperText}</p>}
     </div>
   );
 }

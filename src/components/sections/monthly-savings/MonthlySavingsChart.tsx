@@ -5,17 +5,20 @@ import type { YearlyRow } from "@/lib/calculations/types";
 
 interface MonthlySavingsChartProps {
   rows: YearlyRow[];
-  averages: { monthlySavings: number; monthlyServiceCharge: number };
 }
 
-export default function MonthlySavingsChart({ rows }: MonthlySavingsChartProps) {
-  const chartData = rows.map((row) => ({
+function prepareChartData(rows: YearlyRow[]) {
+  return rows.map((row) => ({
     year: row.year,
     rent: row.monthlyRent,
     monthlySavings: row.monthlySavings,
     serviceChargePaid: row.monthlyServiceCharge * 12,
   }));
+}
 
+export default function MonthlySavingsChart({ rows }: MonthlySavingsChartProps) {
+  const chartData = prepareChartData(rows);
+  
   const series = [
     { dataKey: "rent", stroke: "#3b82f6", name: "Monthly Rent" },
     { dataKey: "monthlySavings", stroke: "#10b981", name: "Monthly Savings" },

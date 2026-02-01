@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import ViewModeToggle from "@/components/ui/ViewModeToggle";
-import ComparisonContainer from "@/components/containers/ComparisonContainer";
-import MonthlySavingsContainer from "@/components/containers/MonthlySavingsContainer";
-import EquityContainer from "@/components/containers/EquityContainer";
-import SavingsInvestmentContainer from "@/components/containers/SavingsInvestmentContainer";
+import ComparisonSection from "@/components/sections/comparison/ComparisonSection";
+import MonthlySavingsSection from "@/components/sections/monthly-savings/MonthlySavingsSection";
+import EquitySection from "@/components/sections/equity/EquitySection";
+import SavingsInvestmentSection from "@/components/sections/savings-investment/SavingsInvestmentSection";
 import type { CalculationResults } from "@/types/calculator";
 
 interface ResultsProps {
@@ -29,22 +29,22 @@ export default function Results({ data }: ResultsProps) {
         </div>
 
         <div className="space-y-6">
-          <ComparisonContainer
+          <ComparisonSection
             data={data}
             viewMode={viewMode}
           />
 
-          <MonthlySavingsContainer
+          <MonthlySavingsSection
             data={data}
             viewMode={viewMode}
           />
 
-          <EquityContainer
+          <EquitySection
             data={data}
             viewMode={viewMode}
           />
 
-          <SavingsInvestmentContainer
+          <SavingsInvestmentSection
             data={data}
             viewMode={viewMode}
           />

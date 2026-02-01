@@ -5,16 +5,19 @@ import type { YearlyRow } from "@/lib/calculations/types";
 
 interface SavingsInvestmentChartProps {
   rows: YearlyRow[];
-  totals: { equityGained: number; interestPaid: number; investmentValue: number };
 }
 
-export default function SavingsInvestmentChart({ rows }: SavingsInvestmentChartProps) {
-  const chartData = rows.map((row) => ({
+function prepareChartData(rows: YearlyRow[]) {
+  return rows.map((row) => ({
     year: row.year,
     value: row.investmentValue,
     appreciation: row.investmentAppreciation,
   }));
+}
 
+export default function SavingsInvestmentChart({ rows }: SavingsInvestmentChartProps) {
+  const chartData = prepareChartData(rows);
+  
   const series = [
     { dataKey: "value", stroke: "#10b981", name: "Value" },
     { dataKey: "appreciation", stroke: "#3b82f6", name: "Appreciation" },

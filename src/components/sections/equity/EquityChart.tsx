@@ -5,18 +5,21 @@ import type { YearlyRow } from "@/lib/calculations/types";
 
 interface EquityChartProps {
   rows: YearlyRow[];
-  totals: { equityGained: number; interestPaid: number; investmentValue: number };
 }
 
-export default function EquityChart({ rows }: EquityChartProps) {
-  const chartData = rows.map((row) => ({
+function prepareChartData(rows: YearlyRow[]) {
+  return rows.map((row) => ({
     year: row.year,
     equityGained: row.principalPaid,
     interestPaid: row.interestPaid,
     remainingBalance: row.mortgageBalance,
     propertySoldPrice: row.propertyValue,
   }));
+}
 
+export default function EquityChart({ rows }: EquityChartProps) {
+  const chartData = prepareChartData(rows);
+  
   const series = [
     { dataKey: "equityGained", stroke: "#10b981", name: "Equity Gained" },
     { dataKey: "interestPaid", stroke: "#ef4444", name: "Interest Paid" },

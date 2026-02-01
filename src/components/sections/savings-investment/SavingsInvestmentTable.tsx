@@ -5,13 +5,10 @@ import type { YearlyRow } from "@/lib/calculations/types";
 
 interface SavingsInvestmentTableProps {
   rows: YearlyRow[];
-  totals: { equityGained: number; interestPaid: number; investmentValue: number };
 }
 
-export default function SavingsInvestmentTable({ rows }: SavingsInvestmentTableProps) {
-  const headers = ["Year", "Value", "Appreciation"];
-
-  const tableRows = rows.map((row) => (
+function renderRow(row: YearlyRow) {
+  return (
     <tr
       key={row.year}
       className="border-b border-zinc-200 dark:border-zinc-700"
@@ -32,14 +29,19 @@ export default function SavingsInvestmentTable({ rows }: SavingsInvestmentTableP
         })}
       </td>
     </tr>
-  ));
+  );
+}
 
+export default function SavingsInvestmentTable({ rows }: SavingsInvestmentTableProps) {
   return (
     <div>
       <h4 className="mb-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
         Yearly Performance
       </h4>
-      <DataTable headers={headers} rows={tableRows} />
+      <DataTable
+        headers={["Year", "Value", "Appreciation"]}
+        rows={rows.map(renderRow)}
+      />
     </div>
   );
 }

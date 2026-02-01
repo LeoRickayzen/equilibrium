@@ -3,19 +3,11 @@
 import MetricCard from "@/components/ui/MetricCard";
 import type { CalculationResults } from "@/types/calculator";
 
-interface EquityCardProps {
+interface EquityMetricsProps {
   data: CalculationResults;
 }
 
-export default function EquityCard({ data }: EquityCardProps) {
-  if (data.rows.length === 0) {
-    return (
-      <p className="text-lg text-zinc-500 dark:text-zinc-500">
-        Enter values to calculate
-      </p>
-    );
-  }
-
+export default function EquityMetrics({ data }: EquityMetricsProps) {
   return (
     <div className="mb-6 flex flex-wrap gap-6">
       <MetricCard

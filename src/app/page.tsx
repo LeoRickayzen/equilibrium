@@ -1,16 +1,24 @@
 "use client";
 
 import { useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { useCalculatorForm } from "@/hooks/useCalculatorForm";
 import { useCalculator } from "@/hooks/computation/useCalculator";
 import { useRenovationCostValidation } from "@/hooks/useRenovationCostValidation";
 import InputField from "@/components/InputField";
 import Results from "@/components/Results";
+import ShareLinkButton from "@/components/ShareLinkButton";
 import { calculateRenovationValueAdded, calculateFinalPropertyValue } from "@/lib/propertyValueCalculations";
 import { formatCurrency } from "@/lib/formatting";
+import { decodeCalculatorInputs } from "@/lib/shareUrl";
 
 export default function Home() {
-  const { inputs, updateInput, getParsedInputs } = useCalculatorForm();
+  const searchParams = useSearchParams();
+  const initialInputs = useMemo(() => {
+    return decodeCalculatorInputs(searchParams) ?? undefined;
+  }, [searchParams]);
+
+  const { inputs, updateInput, getParsedInputs } = useCalculatorForm(initialInputs);
   const parsedInputs = getParsedInputs();
   const calculationResults = useCalculator(parsedInputs);
 
@@ -71,9 +79,12 @@ export default function Home() {
                 This calculator is for illustrative purposes only. The numbers and calculations may be inaccurate and should not be relied upon for financial decisions. This is not financial advice or a recommendation to rent or buy a property. You should consult a qualified financial advisor before making any financial decisions. The author accepts no liability for any loss or damage resulting from the use of this tool.
               </p>
             </div>
-            <h1 className="mb-8 text-3xl font-bold text-black dark:text-zinc-50">
-              Rent or Buy Calculator
-            </h1>
+            <div className="mb-8 flex items-start justify-between gap-4">
+              <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
+                Rent or Buy
+              </h1>
+              <ShareLinkButton inputs={inputs} />
+            </div>
 
             <div className="space-y-6">
               <InputField

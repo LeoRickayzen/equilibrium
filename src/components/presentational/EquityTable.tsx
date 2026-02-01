@@ -1,13 +1,14 @@
 "use client";
 
 import DataTable from "@/components/ui/DataTable";
-import type { EquityData } from "@/types/calculator";
+import type { YearlyRow } from "@/lib/calculations/types";
 
 interface EquityTableProps {
-  equityData: EquityData;
+  rows: YearlyRow[];
+  totals: { equityGained: number; interestPaid: number; investmentValue: number };
 }
 
-export default function EquityTable({ equityData }: EquityTableProps) {
+export default function EquityTable({ rows }: EquityTableProps) {
   const headers = [
     "Year",
     "Equity Gained",
@@ -16,34 +17,34 @@ export default function EquityTable({ equityData }: EquityTableProps) {
     "Property Sold Price",
   ];
 
-  const rows = equityData.yearlyBreakdown.map((yearData) => (
+  const tableRows = rows.map((row) => (
     <tr
-      key={yearData.year}
+      key={row.year}
       className="border-b border-zinc-200 dark:border-zinc-700"
     >
       <td className="px-4 py-2 text-zinc-900 dark:text-zinc-100">
-        {yearData.year}
+        {row.year}
       </td>
       <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
-        £{yearData.equityGained.toLocaleString("en-GB", {
+        £{row.principalPaid.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
       </td>
       <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
-        £{yearData.interestPaid.toLocaleString("en-GB", {
+        £{row.interestPaid.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
       </td>
       <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
-        £{yearData.remainingBalance.toLocaleString("en-GB", {
+        £{row.mortgageBalance.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
       </td>
       <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
-        £{yearData.propertySoldPrice.toLocaleString("en-GB", {
+        £{row.propertyValue.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
@@ -56,7 +57,7 @@ export default function EquityTable({ equityData }: EquityTableProps) {
       <h4 className="mb-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
         Yearly Breakdown
       </h4>
-      <DataTable headers={headers} rows={rows} />
+      <DataTable headers={headers} rows={tableRows} />
     </div>
   );
 }

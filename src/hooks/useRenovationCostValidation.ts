@@ -17,14 +17,12 @@ export function useRenovationCostValidation(
   inputs: CalculatorInputs,
   updateInput: (key: "renovationCost", value: string) => void
 ): UseRenovationCostValidationResult {
-  // Calculate max allowed renovation cost
   const maxRenovationCost = useMemo(() => {
     const downPayment = parseNumber(inputs.downPayment, 0);
     const legalCosts = parseNumber(inputs.legalConveyancingSurveyCost, 0);
     return Math.max(0, downPayment - legalCosts);
   }, [inputs.downPayment, inputs.legalConveyancingSurveyCost]);
 
-  // Validate renovation cost
   const error = useMemo(() => {
     const renovationCost = parseNumber(inputs.renovationCost, 0);
     if (renovationCost > maxRenovationCost) {
@@ -34,11 +32,9 @@ export function useRenovationCostValidation(
     return undefined;
   }, [inputs.renovationCost, maxRenovationCost]);
 
-  // Handle renovation cost change with clamping
   const handleChange = (value: string) => {
     const parsed = parseNumber(value, 0);
     if (parsed > maxRenovationCost) {
-      // Clamp to maximum
       updateInput("renovationCost", maxRenovationCost.toString());
     } else {
       updateInput("renovationCost", value);

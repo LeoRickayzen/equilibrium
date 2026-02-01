@@ -1,17 +1,14 @@
 "use client";
 
 import DataTable from "@/components/ui/DataTable";
-import type { MonthlySavingsData, SavingsWithAppreciation } from "@/types/calculator";
+import type { YearlyRow } from "@/lib/calculations/types";
 
 interface MonthlySavingsTableProps {
-  monthlySavingsData: MonthlySavingsData;
-  savingsWithAppreciation: SavingsWithAppreciation[] | null;
+  rows: YearlyRow[];
+  averages: { monthlySavings: number; monthlyServiceCharge: number };
 }
 
-export default function MonthlySavingsTable({
-  monthlySavingsData,
-  savingsWithAppreciation,
-}: MonthlySavingsTableProps) {
+export default function MonthlySavingsTable({ rows }: MonthlySavingsTableProps) {
   const headers = [
     "Year",
     "Monthly Rent",
@@ -21,65 +18,62 @@ export default function MonthlySavingsTable({
     "Total Saved, with Appreciation",
   ];
 
-  const rows = monthlySavingsData.yearlyBreakdown.map((yearData, index) => {
-    const savingsData = savingsWithAppreciation?.[index];
-    return (
-      <tr
-        key={yearData.year}
-        className="border-b border-zinc-200 dark:border-zinc-700"
+  const tableRows = rows.map((row) => (
+    <tr
+      key={row.year}
+      className="border-b border-zinc-200 dark:border-zinc-700"
+    >
+      <td className="px-4 py-2 text-zinc-900 dark:text-zinc-100">
+        {row.year}
+      </td>
+      <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
+        £{row.monthlyRent.toLocaleString("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </td>
+      <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
+        £{(row.monthlyServiceCharge * 12).toLocaleString("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+        <span className="ml-1 text-xs text-zinc-500 dark:text-zinc-500">
+          (annual)
+        </span>
+      </td>
+      <td
+        className={`px-4 py-2 text-right font-medium ${
+          row.monthlySavings >= 0
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-600 dark:text-red-400"
+        }`}
       >
-        <td className="px-4 py-2 text-zinc-900 dark:text-zinc-100">
-          {yearData.year}
-        </td>
-        <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
-          £{yearData.rent.toLocaleString("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td className="px-4 py-2 text-right text-zinc-700 dark:text-zinc-300">
-          £{yearData.serviceChargePaid.toLocaleString("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-          <span className="ml-1 text-xs text-zinc-500 dark:text-zinc-500">
-            (annual)
-          </span>
-        </td>
-        <td
-          className={`px-4 py-2 text-right font-medium ${
-            yearData.monthlySavings >= 0
-              ? "text-green-600 dark:text-green-400"
-              : "text-red-600 dark:text-red-400"
-          }`}
-        >
-          £{yearData.monthlySavings.toLocaleString("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
-          £{(savingsData?.totalSaved ?? 0).toLocaleString("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-        <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
-          £{(savingsData?.totalSavedWithAppreciation ?? 0).toLocaleString("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </td>
-      </tr>
-    );
-  });
+        £{row.monthlySavings.toLocaleString("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </td>
+      <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
+        £{row.cumulativeSavings.toLocaleString("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </td>
+      <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
+        £{row.cumulativeSavingsWithAppreciation.toLocaleString("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}
+      </td>
+    </tr>
+  ));
 
   return (
     <div>
       <h4 className="mb-4 text-sm font-medium text-zinc-600 dark:text-zinc-400">
         Yearly Breakdown
       </h4>
-      <DataTable headers={headers} rows={rows} />
+      <DataTable headers={headers} rows={tableRows} />
     </div>
   );
 }

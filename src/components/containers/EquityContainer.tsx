@@ -4,26 +4,26 @@ import SectionCard from "@/components/ui/SectionCard";
 import EquityCard from "@/components/presentational/EquityCard";
 import EquityTable from "@/components/presentational/EquityTable";
 import EquityChart from "@/components/presentational/EquityChart";
-import type { EquityData } from "@/types/calculator";
+import type { CalculationResults } from "@/types/calculator";
 
 interface EquityContainerProps {
-  equityData: EquityData | null;
+  data: CalculationResults;
   viewMode: "table" | "graph";
 }
 
 export default function EquityContainer({
-  equityData,
+  data,
   viewMode,
 }: EquityContainerProps) {
   return (
     <SectionCard title="Equity Gained">
-      <EquityCard equityData={equityData} />
-      {equityData?.yearlyBreakdown && equityData.yearlyBreakdown.length > 0 && (
+      <EquityCard data={data} />
+      {data.rows.length > 0 && (
         <>
           {viewMode === "table" ? (
-            <EquityTable equityData={equityData} />
+            <EquityTable rows={data.rows} totals={data.totals} />
           ) : (
-            <EquityChart equityData={equityData} />
+            <EquityChart rows={data.rows} totals={data.totals} />
           )}
         </>
       )}

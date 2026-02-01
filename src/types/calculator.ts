@@ -1,4 +1,5 @@
-// Core calculator input types
+import type { YearlyRow } from "@/lib/calculations/types";
+
 export interface CalculatorInputs {
   downPayment: string;
   propertyPrice: string;
@@ -42,7 +43,31 @@ export interface ParsedCalculatorInputs {
   estateAgentFeesPercent: number;
 }
 
-// Results data types
+export interface CalculationResults {
+  rows: YearlyRow[];
+  
+  totals: {
+    equityGained: number;
+    interestPaid: number;
+    investmentValue: number;
+  };
+  
+  averages: {
+    monthlySavings: number;
+    monthlyServiceCharge: number;
+  };
+  
+  final: {
+    difference: number;
+    winner: "buy" | "rent";
+    cumulativeSavingsWithAppreciation: number;
+  };
+  
+  monthlyMortgagePayment: number | null;
+  stampDuty: number;
+  parsedInputs: ParsedCalculatorInputs;
+}
+
 export interface MonthlySavingsData {
   averageMonthlySavings: number;
   averageMonthlyServiceCharge: number;

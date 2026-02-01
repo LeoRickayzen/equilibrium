@@ -1,13 +1,20 @@
 "use client";
 
 import DataChart from "@/components/ui/DataChart";
-import type { SavingsInvestmentPerformance } from "@/types/calculator";
+import type { YearlyRow } from "@/lib/calculations/types";
 
 interface SavingsInvestmentChartProps {
-  performanceData: SavingsInvestmentPerformance;
+  rows: YearlyRow[];
+  totals: { equityGained: number; interestPaid: number; investmentValue: number };
 }
 
-export default function SavingsInvestmentChart({ performanceData }: SavingsInvestmentChartProps) {
+export default function SavingsInvestmentChart({ rows }: SavingsInvestmentChartProps) {
+  const chartData = rows.map((row) => ({
+    year: row.year,
+    value: row.investmentValue,
+    appreciation: row.investmentAppreciation,
+  }));
+
   const series = [
     { dataKey: "value", stroke: "#10b981", name: "Value" },
     { dataKey: "appreciation", stroke: "#3b82f6", name: "Appreciation" },
@@ -19,7 +26,7 @@ export default function SavingsInvestmentChart({ performanceData }: SavingsInves
         Yearly Performance
       </h4>
       <DataChart
-        data={performanceData.yearlyBreakdown}
+        data={chartData}
         series={series}
         xAxisKey="year"
       />

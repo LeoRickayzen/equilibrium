@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { useCalculatorForm } from "@/hooks/useCalculatorForm";
+import type { CalculatorInputs } from "@/types/calculator";
+import { DEFAULT_INPUTS } from "@/lib/constants";
+import { getParsedInputs } from "@/lib/formUtils";
 import { useCalculator } from "@/hooks/computation/useCalculator";
 import { useRenovationCostValidation } from "@/hooks/useRenovationCostValidation";
 import InputField from "@/components/InputField";
@@ -18,9 +20,23 @@ export default function Home() {
     return decodeCalculatorInputs(searchParams) ?? undefined;
   }, [searchParams]);
 
-  const { inputs, updateInput, getParsedInputs } = useCalculatorForm(initialInputs);
-  const parsedInputs = getParsedInputs();
-  const calculationResults = useCalculator(parsedInputs);
+  const [inputs, setInputs] = useState<CalculatorInputs>({
+    ...DEFAULT_INPUTS,
+    ...initialInputs,
+  });
+
+  const updateInput = useCallback(
+    <K extends keyof CalculatorInputs>(
+      key: K,
+      value: CalculatorInputs[K]
+    ) => {
+      setInputs((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
+
+  const parsedInputs = useMemo(() => getParsedInputs(inputs), [inputs]);
+  const data = useCalculator(parsedInputs);
 
   // Renovation cost validation
   const { error: renovationCostError, handleChange: handleRenovationCostChange } =
@@ -259,11 +275,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Right side - Results */}
-        <Results
-          calculationResults={calculationResults}
-          parsedInputs={parsedInputs}
-        />
+        <Results data={data} />
       </div>
     </div>
   );

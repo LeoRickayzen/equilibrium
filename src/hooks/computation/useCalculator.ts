@@ -1,17 +1,11 @@
 import { useMemo } from "react";
 import { calculatorService } from "@/services/calculatorService";
-import type { ParsedCalculatorInputs, CalculatorResults } from "@/types/calculator";
-import type { YearlyRow } from "@/lib/calculations";
+import type { ParsedCalculatorInputs, CalculationResults } from "@/types/calculator";
 
-/**
- * Computation hook for calculator
- * Uses the spreadsheet model to compute all values in a single pass
- */
 export function useCalculator(
   parsedInputs: ParsedCalculatorInputs
-): CalculatorResults {
-  // Build the complete spreadsheet in one pass
-  const yearlyRows = useMemo(() => {
+): CalculationResults {
+  return useMemo(() => {
     const {
       propertyPrice,
       downPayment,
@@ -29,16 +23,17 @@ export function useCalculator(
       renovationReturn,
       legalConveyancingSurveyCost,
       estateAgentFeesPercent,
+      isFirstTimeBuyer,
+      isAdditionalProperty,
     } = parsedInputs;
 
-    // Calculate stamp duty first (needed for spreadsheet)
     const stampDuty = calculatorService.computeStampDuty(
       propertyPrice,
-      parsedInputs.isFirstTimeBuyer,
-      parsedInputs.isAdditionalProperty
+      isFirstTimeBuyer,
+      isAdditionalProperty
     );
 
-    return calculatorService.buildSpreadsheet({
+    const yearlyRows = calculatorService.buildSpreadsheet({
       propertyPrice,
       downPayment,
       interestRate,
@@ -57,6 +52,8 @@ export function useCalculator(
       legalConveyancingSurveyCost,
       estateAgentFeesPercent,
     });
+
+    return calculatorService.toSpreadsheetData(yearlyRows, stampDuty, parsedInputs);
   }, [
     parsedInputs.propertyPrice,
     parsedInputs.downPayment,
@@ -77,40 +74,4 @@ export function useCalculator(
     parsedInputs.isFirstTimeBuyer,
     parsedInputs.isAdditionalProperty,
   ]);
-
-  // Convert spreadsheet to required formats
-  const monthlyMortgagePayment = useMemo(() => {
-    return yearlyRows.length > 0 ? yearlyRows[0].monthlyMortgagePayment : null;
-  }, [yearlyRows]);
-
-  const monthlySavingsData = useMemo(() => {
-    return calculatorService.spreadsheetToMonthlySavingsData(yearlyRows);
-  }, [yearlyRows]);
-
-  const equityData = useMemo(() => {
-    return calculatorService.spreadsheetToEquityData(yearlyRows);
-  }, [yearlyRows]);
-
-  const stampDuty = useMemo(() => {
-    return calculatorService.computeStampDuty(
-      parsedInputs.propertyPrice,
-      parsedInputs.isFirstTimeBuyer,
-      parsedInputs.isAdditionalProperty
-    );
-  }, [
-    parsedInputs.propertyPrice,
-    parsedInputs.isFirstTimeBuyer,
-    parsedInputs.isAdditionalProperty,
-  ]);
-
-  return {
-    monthlyMortgagePayment,
-    monthlySavingsData,
-    equityData,
-    savingsWithAppreciation: null, // Calculated in containers from spreadsheet
-    savingsInvestmentPerformance: null, // Calculated in containers from spreadsheet
-    stampDuty,
-    parsedInputs,
-    yearlyRows: yearlyRows as YearlyRow[], // Include spreadsheet data for containers
-  };
 }

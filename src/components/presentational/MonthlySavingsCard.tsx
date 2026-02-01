@@ -1,20 +1,14 @@
 "use client";
 
 import MetricCard from "@/components/ui/MetricCard";
-import type { MonthlySavingsData } from "@/types/calculator";
+import type { CalculationResults } from "@/types/calculator";
 
 interface MonthlySavingsCardProps {
-  monthlyMortgagePayment: number | null;
-  monthlySavingsData: MonthlySavingsData | null;
-  totalSavedWithAppreciation: number | null;
+  data: CalculationResults;
 }
 
-export default function MonthlySavingsCard({
-  monthlyMortgagePayment,
-  monthlySavingsData,
-  totalSavedWithAppreciation,
-}: MonthlySavingsCardProps) {
-  if (monthlySavingsData === null) {
+export default function MonthlySavingsCard({ data }: MonthlySavingsCardProps) {
+  if (data.rows.length === 0) {
     return (
       <p className="text-lg text-zinc-500 dark:text-zinc-500">
         Enter values to calculate
@@ -24,10 +18,10 @@ export default function MonthlySavingsCard({
 
   return (
     <div className="mb-6 flex flex-wrap gap-6">
-        {monthlyMortgagePayment !== null ? (
+        {data.monthlyMortgagePayment !== null ? (
           <MetricCard
             label="Monthly Mortgage Payment"
-            value={monthlyMortgagePayment}
+            value={data.monthlyMortgagePayment}
           />
         ) : (
           <div className="flex-1 min-w-[200px]">
@@ -41,15 +35,15 @@ export default function MonthlySavingsCard({
         )}
         <MetricCard
           label="Average Monthly Service Charge"
-          value={monthlySavingsData.averageMonthlyServiceCharge}
+          value={data.averages.monthlyServiceCharge}
         />
         <MetricCard
           label="Average Monthly Savings"
-          value={monthlySavingsData.averageMonthlySavings}
+          value={data.averages.monthlySavings}
         />
         <MetricCard
           label="Total Saved, with Appreciation"
-          value={totalSavedWithAppreciation ?? 0}
+          value={data.final.cumulativeSavingsWithAppreciation}
         />
       </div>
   );

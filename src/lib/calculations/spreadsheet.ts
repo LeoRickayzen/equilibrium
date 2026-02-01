@@ -332,6 +332,7 @@ function buildYearlyRow(
   propertyValue: number,
   equityInProperty: number,
   investmentValue: number,
+  investmentAppreciation: number,
   comparison: YearlyComparisonValues
 ): YearlyRow {
   return {
@@ -348,6 +349,7 @@ function buildYearlyRow(
     propertyValue,
     equityInProperty,
     investmentValue,
+    investmentAppreciation,
     sizeOfEquityBuying: comparison.sizeOfEquityBuying,
     sizeOfEquityIfInvested: comparison.sizeOfEquityIfInvested,
     difference: comparison.difference,
@@ -387,8 +389,8 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
   };
 
   const rows: YearlyRow[] = [];
+  let previousInvestmentValue = 0;
 
-  // Build rows for each year
   for (let year = 1; year <= inputs.timeInProperty; year++) {
     // Calculate rent and service charge
     const { monthlyRent, monthlyServiceCharge } =
@@ -435,14 +437,18 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
       year
     );
 
-    // Calculate comparison
+    const investmentAppreciation = year === 1 
+      ? 0 
+      : investmentValue - previousInvestmentValue;
+    
+    previousInvestmentValue = investmentValue;
+
     const comparison = calculateYearlyComparison(
       propertyValue.equityInProperty,
       state.cumulativeSavingsWithAppreciation,
       investmentValue
     );
 
-    // Build and add row
     const row = buildYearlyRow(
       year,
       monthlyMortgagePayment,
@@ -457,6 +463,7 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
       propertyValue.propertyValue,
       propertyValue.equityInProperty,
       investmentValue,
+      investmentAppreciation,
       comparison
     );
 

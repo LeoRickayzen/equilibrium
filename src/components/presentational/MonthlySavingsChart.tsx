@@ -1,13 +1,21 @@
 "use client";
 
 import DataChart from "@/components/ui/DataChart";
-import type { MonthlySavingsData } from "@/types/calculator";
+import type { YearlyRow } from "@/lib/calculations/types";
 
 interface MonthlySavingsChartProps {
-  monthlySavingsData: MonthlySavingsData;
+  rows: YearlyRow[];
+  averages: { monthlySavings: number; monthlyServiceCharge: number };
 }
 
-export default function MonthlySavingsChart({ monthlySavingsData }: MonthlySavingsChartProps) {
+export default function MonthlySavingsChart({ rows }: MonthlySavingsChartProps) {
+  const chartData = rows.map((row) => ({
+    year: row.year,
+    rent: row.monthlyRent,
+    monthlySavings: row.monthlySavings,
+    serviceChargePaid: row.monthlyServiceCharge * 12,
+  }));
+
   const series = [
     { dataKey: "rent", stroke: "#3b82f6", name: "Monthly Rent" },
     { dataKey: "monthlySavings", stroke: "#10b981", name: "Monthly Savings" },
@@ -20,7 +28,7 @@ export default function MonthlySavingsChart({ monthlySavingsData }: MonthlySavin
         Yearly Breakdown
       </h4>
       <DataChart
-        data={monthlySavingsData.yearlyBreakdown}
+        data={chartData}
         series={series}
         xAxisKey="year"
       />

@@ -1,13 +1,13 @@
 "use client";
 
 import DataChart from "@/components/ui/DataChart";
-import type { ComparisonData } from "@/types/calculator";
+import type { YearlyRow } from "@/lib/calculations/types";
 
 interface ComparisonChartProps {
-  comparisonData: ComparisonData;
+  rows: YearlyRow[];
 }
 
-export default function ComparisonChart({ comparisonData }: ComparisonChartProps) {
+export default function ComparisonChart({ rows }: ComparisonChartProps) {
   const series = [
     { dataKey: "sizeOfEquityBuying", stroke: "#10b981", name: "Size of Equity Buying" },
     { dataKey: "sizeOfEquityIfInvested", stroke: "#3b82f6", name: "Size of Equity if Invested" },
@@ -19,7 +19,7 @@ export default function ComparisonChart({ comparisonData }: ComparisonChartProps
         Yearly Comparison
       </h4>
       <DataChart
-        data={comparisonData.yearlyBreakdown}
+        data={rows}
         series={series}
         xAxisKey="year"
       />

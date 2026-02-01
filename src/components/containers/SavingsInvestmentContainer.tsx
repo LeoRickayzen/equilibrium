@@ -1,42 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
-import { calculatorService } from "@/services/calculatorService";
 import SectionCard from "@/components/ui/SectionCard";
 import SavingsInvestmentCard from "@/components/presentational/SavingsInvestmentCard";
 import SavingsInvestmentTable from "@/components/presentational/SavingsInvestmentTable";
 import SavingsInvestmentChart from "@/components/presentational/SavingsInvestmentChart";
-import type { YearlyRow } from "@/lib/calculations";
+import type { CalculationResults } from "@/types/calculator";
 
 interface SavingsInvestmentContainerProps {
-  yearlyRows: YearlyRow[];
+  data: CalculationResults;
   viewMode: "table" | "graph";
 }
 
 export default function SavingsInvestmentContainer({
-  yearlyRows,
+  data,
   viewMode,
 }: SavingsInvestmentContainerProps) {
-  const performanceData = useMemo(() => {
-    if (yearlyRows.length === 0) {
-      return null;
-    }
-    return calculatorService.spreadsheetToSavingsInvestmentPerformance(yearlyRows);
-  }, [yearlyRows]);
-
-  if (!performanceData) {
+  if (data.rows.length === 0) {
     return null;
   }
 
   return (
     <SectionCard title="Savings Total Investment Performance">
-      <SavingsInvestmentCard performanceData={performanceData} />
-      {performanceData.yearlyBreakdown.length > 0 && (
+      <SavingsInvestmentCard data={data} />
+      {data.rows.length > 0 && (
         <>
           {viewMode === "table" ? (
-            <SavingsInvestmentTable performanceData={performanceData} />
+            <SavingsInvestmentTable rows={data.rows} totals={data.totals} />
           ) : (
-            <SavingsInvestmentChart performanceData={performanceData} />
+            <SavingsInvestmentChart rows={data.rows} totals={data.totals} />
           )}
         </>
       )}

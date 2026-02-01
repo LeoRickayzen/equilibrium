@@ -280,3 +280,11 @@ function HomeContent() {
     </div>
   );
 }
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-zinc-50 dark:bg-black" />}>
+      <HomeContent />
+    </Suspense>
+  );
+}

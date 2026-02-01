@@ -18,6 +18,7 @@ export function createMockYearlyRow(overrides?: Partial<YearlyRow>): YearlyRow {
     propertyValue: 204000,
     equityInProperty: 54000,
     investmentValue: 41200,
+    investmentAppreciation: 1200,
     sizeOfEquityBuying: 49600,
     sizeOfEquityIfInvested: 41200,
     difference: 8400,

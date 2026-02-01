@@ -4,27 +4,23 @@
 export interface YearlyRow {
   year: number;
   
-  // Mortgage columns
   monthlyMortgagePayment: number | null;
   mortgageBalance: number;
   principalPaid: number;
   interestPaid: number;
   
-  // Rent/Savings columns
   monthlyRent: number;
   monthlyServiceCharge: number;
   monthlySavings: number;
   cumulativeSavings: number;
   cumulativeSavingsWithAppreciation: number;
   
-  // Property columns
   propertyValue: number;
   equityInProperty: number;
   
-  // Investment columns (renting scenario)
-  investmentValue: number; // Down payment invested at renting rate
+  investmentValue: number;
+  investmentAppreciation: number;
   
-  // Comparison columns
   sizeOfEquityBuying: number;
   sizeOfEquityIfInvested: number;
   difference: number;

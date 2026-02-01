@@ -1,14 +1,13 @@
 "use client";
 
 import MetricCard from "@/components/ui/MetricCard";
-import type { ComparisonData } from "@/types/calculator";
+import type { CalculationResults } from "@/types/calculator";
 
 interface ComparisonCardProps {
-  comparisonData: ComparisonData;
-  stampDuty: number;
+  data: CalculationResults;
 }
 
-export default function ComparisonCard({ comparisonData, stampDuty }: ComparisonCardProps) {
+export default function ComparisonCard({ data }: ComparisonCardProps) {
   return (
     <div className="mb-6 flex flex-wrap gap-6">
         <div className="flex-1 min-w-[200px]">
@@ -17,18 +16,18 @@ export default function ComparisonCard({ comparisonData, stampDuty }: Comparison
           </p>
           <p
             className={`text-3xl font-bold ${
-              comparisonData.totalDifference >= 0
+              data.final.difference >= 0
                 ? "text-green-600 dark:text-green-400"
                 : "text-red-600 dark:text-red-400"
             }`}
           >
-            £{Math.abs(comparisonData.totalDifference).toLocaleString("en-GB", {
+            £{Math.abs(data.final.difference).toLocaleString("en-GB", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
           </p>
           <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-500">
-            {comparisonData.totalDifference >= 0
+            {data.final.difference >= 0
               ? "Buying is better"
               : "Renting is better"}
           </p>
@@ -39,17 +38,17 @@ export default function ComparisonCard({ comparisonData, stampDuty }: Comparison
           </p>
           <p
             className={`text-3xl font-bold ${
-              comparisonData.winner === "buy"
+              data.final.winner === "buy"
                 ? "text-green-600 dark:text-green-400"
                 : "text-blue-600 dark:text-blue-400"
             }`}
           >
-            {comparisonData.winner === "buy" ? "Buy" : "Rent"}
+            {data.final.winner === "buy" ? "Buy" : "Rent"}
           </p>
         </div>
         <MetricCard
           label="Stamp Duty Paid"
-          value={stampDuty}
+          value={data.stampDuty}
         />
       </div>
   );

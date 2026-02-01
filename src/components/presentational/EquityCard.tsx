@@ -1,14 +1,14 @@
 "use client";
 
 import MetricCard from "@/components/ui/MetricCard";
-import type { EquityData } from "@/types/calculator";
+import type { CalculationResults } from "@/types/calculator";
 
 interface EquityCardProps {
-  equityData: EquityData | null;
+  data: CalculationResults;
 }
 
-export default function EquityCard({ equityData }: EquityCardProps) {
-  if (equityData === null) {
+export default function EquityCard({ data }: EquityCardProps) {
+  if (data.rows.length === 0) {
     return (
       <p className="text-lg text-zinc-500 dark:text-zinc-500">
         Enter values to calculate
@@ -20,11 +20,11 @@ export default function EquityCard({ equityData }: EquityCardProps) {
     <div className="mb-6 flex flex-wrap gap-6">
       <MetricCard
         label="Total Equity Gained"
-        value={equityData.totalEquityGained}
+        value={data.totals.equityGained}
       />
       <MetricCard
         label="Interest Paid"
-        value={equityData.totalInterestPaid}
+        value={data.totals.interestPaid}
       />
     </div>
   );

@@ -1,42 +1,33 @@
 "use client";
 
-import { useMemo } from "react";
-import { calculatorService } from "@/services/calculatorService";
 import SectionCard from "@/components/ui/SectionCard";
 import ComparisonCard from "@/components/presentational/ComparisonCard";
 import ComparisonTable from "@/components/presentational/ComparisonTable";
 import ComparisonChart from "@/components/presentational/ComparisonChart";
-import type { YearlyRow } from "@/lib/calculations";
+import type { CalculationResults } from "@/types/calculator";
 
 interface ComparisonContainerProps {
-  yearlyRows: YearlyRow[];
-  stampDuty: number;
+  data: CalculationResults;
   viewMode: "table" | "graph";
 }
 
 export default function ComparisonContainer({
-  yearlyRows,
-  stampDuty,
+  data,
   viewMode,
 }: ComparisonContainerProps) {
-  const comparisonData = useMemo(() => {
-    if (yearlyRows.length === 0) return null;
-    return calculatorService.spreadsheetToComparisonData(yearlyRows);
-  }, [yearlyRows]);
-
-  if (!comparisonData) {
+  if (data.rows.length === 0) {
     return null;
   }
 
   return (
     <SectionCard title="Comparison: Rent vs Buy">
-      <ComparisonCard comparisonData={comparisonData} stampDuty={stampDuty} />
-      {comparisonData.yearlyBreakdown.length > 0 && (
+      <ComparisonCard data={data} />
+      {data.rows.length > 0 && (
         <>
           {viewMode === "table" ? (
-            <ComparisonTable comparisonData={comparisonData} />
+            <ComparisonTable rows={data.rows} />
           ) : (
-            <ComparisonChart comparisonData={comparisonData} />
+            <ComparisonChart rows={data.rows} />
           )}
         </>
       )}

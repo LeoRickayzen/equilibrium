@@ -48,8 +48,6 @@ interface PropertyValueParams {
   adjustedPropertyPrice: number;
   propertyAppreciation: number;
   mortgageBalance: number;
-  stampDuty: number;
-  legalConveyancingSurveyCost: number;
   estateAgentFeesPercent: number;
   year: number;
 }
@@ -114,8 +112,8 @@ function calculateInitialMortgageDetails(
     legalConveyancingSurveyCost,
   } = inputs;
 
-  // Calculate loan amount (legal costs and renovation costs reduce available savings)
-  const availableSavings = Math.max(0, downPayment - legalConveyancingSurveyCost - renovationCost);
+  // Calculate loan amount (stamp duty, legal costs and renovation costs reduce available savings)
+  const availableSavings = Math.max(0, downPayment - inputs.stampDuty - legalConveyancingSurveyCost - renovationCost);
   const loanAmount = Math.max(0, propertyPrice - availableSavings);
 
   // Calculate monthly mortgage payment
@@ -256,8 +254,6 @@ function calculateYearlyPropertyValue(
     adjustedPropertyPrice,
     propertyAppreciation,
     mortgageBalance,
-    stampDuty,
-    legalConveyancingSurveyCost,
     estateAgentFeesPercent,
     year,
   } = params;
@@ -266,15 +262,9 @@ function calculateYearlyPropertyValue(
     adjustedPropertyPrice * Math.pow(1 + propertyAppreciation / 100, year);
   const estateAgentFees = propertyValue * (estateAgentFeesPercent / 100);
   
-  // The renovation return value is already included in propertyValue through adjustedPropertyPrice
-  // and has appreciated over time. The renovation cost was already deducted from available savings
-  // when calculating the loan amount, so we don't need to subtract it again here.
-  
   const equityInProperty =
     propertyValue -
     mortgageBalance -
-    stampDuty -
-    legalConveyancingSurveyCost -
     estateAgentFees;
 
   return {
@@ -389,7 +379,7 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
   };
 
   const rows: YearlyRow[] = [];
-  let previousInvestmentValue = 0;
+  let previousInvestmentValue = inputs.downPayment;
 
   for (let year = 1; year <= inputs.timeInProperty; year++) {
     // Calculate rent and service charge
@@ -424,8 +414,6 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
       adjustedPropertyPrice,
       propertyAppreciation: inputs.propertyAppreciation,
       mortgageBalance: state.mortgageBalance,
-      stampDuty: inputs.stampDuty,
-      legalConveyancingSurveyCost: inputs.legalConveyancingSurveyCost,
       estateAgentFeesPercent: inputs.estateAgentFeesPercent,
       year,
     });
@@ -437,9 +425,7 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
       year
     );
 
-    const investmentAppreciation = year === 1 
-      ? 0 
-      : investmentValue - previousInvestmentValue;
+    const investmentAppreciation = investmentValue - previousInvestmentValue;
     
     previousInvestmentValue = investmentValue;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import type { CalculatorInputs } from "@/types/calculator";
 import { DEFAULT_INPUTS } from "@/lib/constants";
@@ -14,7 +14,7 @@ import { calculateRenovationValueAdded, calculateFinalPropertyValue } from "@/li
 import { formatCurrency } from "@/lib/formatting";
 import { decodeCalculatorInputs } from "@/lib/shareUrl";
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const initialInputs = useMemo(() => {
     return decodeCalculatorInputs(searchParams) ?? undefined;

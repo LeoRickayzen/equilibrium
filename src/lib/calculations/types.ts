@@ -32,7 +32,7 @@ export interface YearlyRow {
  */
 export interface SpreadsheetInputs {
   propertyPrice: number;
-  downPayment: number;
+  initialCapital: number;
   interestRate: number;
   mortgageLength: number;
   timeInProperty: number;

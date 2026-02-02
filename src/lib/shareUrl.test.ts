@@ -5,7 +5,7 @@ import { decodeCalculatorInputs, encodeCalculatorInputs } from "./shareUrl";
 describe("shareUrl", () => {
   it("roundtrips calculator inputs", () => {
     const inputs: CalculatorInputs = {
-      downPayment: "20000",
+      initialCapital: "20000",
       propertyPrice: "140000",
       rentPcm: "550",
       rentInflation: "6",
@@ -39,9 +39,9 @@ describe("shareUrl", () => {
 
   it("drops unknown keys and rejects wrong types", () => {
     const decoded = decodeCalculatorInputs(
-      new URLSearchParams("downPayment=12345&isFirstTimeBuyer=maybe&unknownKey=whatever")
+      new URLSearchParams("initialCapital=12345&isFirstTimeBuyer=maybe&unknownKey=whatever")
     );
-    expect(decoded).toEqual({ downPayment: "12345" });
+    expect(decoded).toEqual({ initialCapital: "12345" });
   });
 });
 

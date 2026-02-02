@@ -1,5 +1,5 @@
 import type { YearlyRow, SpreadsheetInputs } from "./types";
-import { calculateMonthlyMortgagePayment } from "./mortgage";
+import { calculateMonthlyMortgagePayment, calculateAvailableDownPayment, calculateLoanAmount } from "./mortgage";
 
 // ============================================================================
 // Helper Interfaces
@@ -85,7 +85,7 @@ function calculateInflationMultiplier(
 function validateSpreadsheetInputs(inputs: SpreadsheetInputs): boolean {
   return (
     inputs.propertyPrice > 0 &&
-    inputs.downPayment >= 0 &&
+    inputs.initialCapital >= 0 &&
     inputs.interestRate >= 0 &&
     inputs.mortgageLength > 0 &&
     inputs.timeInProperty > 0 &&
@@ -104,7 +104,7 @@ function calculateInitialMortgageDetails(
 ): InitialMortgageDetails {
   const {
     propertyPrice,
-    downPayment,
+    initialCapital,
     interestRate,
     mortgageLength,
     renovationCost,
@@ -112,9 +112,13 @@ function calculateInitialMortgageDetails(
     legalConveyancingSurveyCost,
   } = inputs;
 
-  // Calculate loan amount (stamp duty, legal costs and renovation costs reduce available savings)
-  const availableSavings = Math.max(0, downPayment - inputs.stampDuty - legalConveyancingSurveyCost - renovationCost);
-  const loanAmount = Math.max(0, propertyPrice - availableSavings);
+  const availableSavings = calculateAvailableDownPayment(
+    initialCapital,
+    inputs.stampDuty,
+    legalConveyancingSurveyCost,
+    renovationCost
+  );
+  const loanAmount = calculateLoanAmount(propertyPrice, availableSavings);
 
   // Calculate monthly mortgage payment
   const monthlyMortgagePayment = calculateMonthlyMortgagePayment(
@@ -277,11 +281,11 @@ function calculateYearlyPropertyValue(
  * Calculates investment value for renting scenario
  */
 function calculateYearlyInvestmentValue(
-  downPayment: number,
+  initialCapital: number,
   investmentAppreciationRenting: number,
   year: number
 ): number {
-  return downPayment * Math.pow(1 + investmentAppreciationRenting / 100, year);
+  return initialCapital * Math.pow(1 + investmentAppreciationRenting / 100, year);
 }
 
 /**
@@ -379,7 +383,7 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
   };
 
   const rows: YearlyRow[] = [];
-  let previousInvestmentValue = inputs.downPayment;
+  let previousInvestmentValue = inputs.initialCapital;
 
   for (let year = 1; year <= inputs.timeInProperty; year++) {
     // Calculate rent and service charge
@@ -420,7 +424,7 @@ export function buildSpreadsheet(inputs: SpreadsheetInputs): YearlyRow[] {
 
     // Calculate investment value
     const investmentValue = calculateYearlyInvestmentValue(
-      inputs.downPayment,
+      inputs.initialCapital,
       inputs.investmentAppreciationRenting,
       year
     );

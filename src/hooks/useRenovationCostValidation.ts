@@ -11,17 +11,17 @@ interface UseRenovationCostValidationResult {
 
 /**
  * Hook for validating renovation cost against available savings
- * Ensures renovation cost cannot exceed: downPayment - legalConveyancingSurveyCost
+ * Ensures renovation cost cannot exceed: initialCapital - legalConveyancingSurveyCost
  */
 export function useRenovationCostValidation(
   inputs: CalculatorInputs,
   updateInput: (key: "renovationCost", value: string) => void
 ): UseRenovationCostValidationResult {
   const maxRenovationCost = useMemo(() => {
-    const downPayment = parseNumber(inputs.downPayment, 0);
+    const initialCapital = parseNumber(inputs.initialCapital, 0);
     const legalCosts = parseNumber(inputs.legalConveyancingSurveyCost, 0);
-    return Math.max(0, downPayment - legalCosts);
-  }, [inputs.downPayment, inputs.legalConveyancingSurveyCost]);
+    return Math.max(0, initialCapital - legalCosts);
+  }, [inputs.initialCapital, inputs.legalConveyancingSurveyCost]);
 
   const error = useMemo(() => {
     const renovationCost = parseNumber(inputs.renovationCost, 0);

@@ -4,7 +4,7 @@ import { parseNumber } from "@/lib/validation";
 
 export function getParsedInputs(inputs: CalculatorInputs): ParsedCalculatorInputs {
   return {
-    downPayment: parseNumber(inputs.downPayment),
+    initialCapital: parseNumber(inputs.initialCapital),
     propertyPrice: parseNumber(inputs.propertyPrice),
     rentPcm: parseNumber(inputs.rentPcm),
     rentInflation: parseNumber(inputs.rentInflation),

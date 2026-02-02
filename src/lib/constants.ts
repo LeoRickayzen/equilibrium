@@ -30,7 +30,7 @@ export const SDLT_RATES = {
 } as const;
 
 export const DEFAULT_INPUTS = {
-  downPayment: "20000",
+  initialCapital: "20000",
   propertyPrice: "140000",
   rentPcm: "550",
   rentInflation: "6",

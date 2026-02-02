@@ -1,6 +1,22 @@
-/**
- * Calculates the monthly mortgage payment using the standard amortization formula
- */
+export function calculateAvailableDownPayment(
+  initialCapital: number,
+  stampDuty: number,
+  legalConveyancingSurveyCost: number,
+  renovationCost: number
+): number {
+  return Math.max(
+    0,
+    initialCapital - stampDuty - legalConveyancingSurveyCost - renovationCost
+  );
+}
+
+export function calculateLoanAmount(
+  propertyPrice: number,
+  availableDownPayment: number
+): number {
+  return Math.max(0, propertyPrice - availableDownPayment);
+}
+
 export function calculateMonthlyMortgagePayment(
   principal: number,
   annualInterestRate: number,

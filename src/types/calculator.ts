@@ -1,7 +1,7 @@
 import type { YearlyRow } from "@/lib/calculations/types";
 
 export interface CalculatorInputs {
-  downPayment: string;
+  initialCapital: string;
   propertyPrice: string;
   rentPcm: string;
   rentInflation: string;
@@ -23,7 +23,7 @@ export interface CalculatorInputs {
 
 // Parsed calculator inputs (numbers)
 export interface ParsedCalculatorInputs {
-  downPayment: number;
+  initialCapital: number;
   propertyPrice: number;
   rentPcm: number;
   rentInflation: number;

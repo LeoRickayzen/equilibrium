@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ViewModeToggle from "@/components/ui/ViewModeToggle";
 import ComparisonSection from "@/components/sections/comparison/ComparisonSection";
+import MortgageBreakdownSection from "@/components/sections/mortgage-breakdown/MortgageBreakdownSection";
 import MonthlySavingsSection from "@/components/sections/monthly-savings/MonthlySavingsSection";
 import EquitySection from "@/components/sections/equity/EquitySection";
 import SavingsInvestmentSection from "@/components/sections/savings-investment/SavingsInvestmentSection";
@@ -33,6 +34,8 @@ export default function Results({ data }: ResultsProps) {
             data={data}
             viewMode={viewMode}
           />
+
+          <MortgageBreakdownSection data={data} />
 
           <MonthlySavingsSection
             data={data}

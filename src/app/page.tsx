@@ -11,6 +11,7 @@ import InputField from "@/components/InputField";
 import Results from "@/components/Results";
 import ShareLinkButton from "@/components/ShareLinkButton";
 import { calculateRenovationValueAdded, calculateFinalPropertyValue } from "@/lib/propertyValueCalculations";
+import { calculateAvailableDownPayment } from "@/lib/calculations/mortgage";
 import { formatCurrency } from "@/lib/formatting";
 import { decodeCalculatorInputs } from "@/lib/shareUrl";
 
@@ -37,6 +38,20 @@ function HomeContent() {
 
   const parsedInputs = useMemo(() => getParsedInputs(inputs), [inputs]);
   const data = useCalculator(parsedInputs);
+
+  const availableDeposit = useMemo(() => {
+    return calculateAvailableDownPayment(
+      parsedInputs.initialCapital,
+      data.stampDuty,
+      parsedInputs.legalConveyancingSurveyCost,
+      parsedInputs.renovationCost
+    );
+  }, [
+    parsedInputs.initialCapital,
+    data.stampDuty,
+    parsedInputs.legalConveyancingSurveyCost,
+    parsedInputs.renovationCost,
+  ]);
 
   // Renovation cost validation
   const { error: renovationCostError, handleChange: handleRenovationCostChange } =
@@ -103,13 +118,21 @@ function HomeContent() {
             </div>
 
             <div className="space-y-6">
-              <InputField
-                id="down-payment"
-                label="Down Payment"
-                value={inputs.downPayment}
-                onChange={(value) => updateInput("downPayment", value)}
-                placeholder="Enter down payment amount"
-              />
+              <div>
+                <InputField
+                  id="initial-capital"
+                  label="Initial Capital"
+                  value={inputs.initialCapital}
+                  onChange={(value) => updateInput("initialCapital", value)}
+                  placeholder="Enter initial capital amount"
+                />
+                <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                  Available down payment after buying and rennovation costs:{" "}
+                  <span className="font-semibold text-green-600 dark:text-green-400">
+                    {formatCurrency(availableDeposit)}
+                  </span>
+                </p>
+              </div>
 
               <InputField
                 id="property-price"

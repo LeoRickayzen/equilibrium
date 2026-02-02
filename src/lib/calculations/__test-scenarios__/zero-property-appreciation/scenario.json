@@ -2,7 +2,6 @@
   "description": "Zero property appreciation: property value unchanged",
   "inputs": {
     "propertyPrice": 200000,
-    "downPayment": 40000,
     "interestRate": 4.5,
     "mortgageLength": 25,
     "timeInProperty": 10,
@@ -17,7 +16,8 @@
     "renovationCost": 10000,
     "renovationReturn": 0,
     "legalConveyancingSurveyCost": 2000,
-    "estateAgentFeesPercent": 1.5
+    "estateAgentFeesPercent": 1.5,
+    "initialCapital": 40000
   },
   "expected": [
     {

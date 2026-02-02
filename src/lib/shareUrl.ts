@@ -1,7 +1,7 @@
 import type { CalculatorInputs } from "@/types/calculator";
 
 const STRING_KEYS = [
-  "downPayment",
+  "initialCapital",
   "propertyPrice",
   "rentPcm",
   "rentInflation",

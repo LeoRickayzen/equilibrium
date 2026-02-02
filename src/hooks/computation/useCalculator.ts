@@ -8,7 +8,7 @@ export function useCalculator(
   return useMemo(() => {
     const {
       propertyPrice,
-      downPayment,
+      initialCapital,
       interestRate,
       mortgageLength,
       timeInProperty,
@@ -35,7 +35,7 @@ export function useCalculator(
 
     const yearlyRows = calculatorService.buildSpreadsheet({
       propertyPrice,
-      downPayment,
+      initialCapital,
       interestRate,
       mortgageLength,
       timeInProperty,
@@ -56,7 +56,7 @@ export function useCalculator(
     return calculatorService.toSpreadsheetData(yearlyRows, stampDuty, parsedInputs);
   }, [
     parsedInputs.propertyPrice,
-    parsedInputs.downPayment,
+    parsedInputs.initialCapital,
     parsedInputs.interestRate,
     parsedInputs.mortgageLength,
     parsedInputs.timeInProperty,

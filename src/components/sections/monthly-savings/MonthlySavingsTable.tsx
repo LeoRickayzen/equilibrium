@@ -43,13 +43,25 @@ function renderRow(row: YearlyRow) {
           maximumFractionDigits: 2,
         })}
       </td>
-      <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
+      <td
+        className={`px-4 py-2 text-right font-medium ${
+          row.cumulativeSavings >= 0
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-600 dark:text-red-400"
+        }`}
+      >
         £{row.cumulativeSavings.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         })}
       </td>
-      <td className="px-4 py-2 text-right font-medium text-green-600 dark:text-green-400">
+      <td
+        className={`px-4 py-2 text-right font-medium ${
+          row.cumulativeSavingsWithAppreciation >= 0
+            ? "text-green-600 dark:text-green-400"
+            : "text-red-600 dark:text-red-400"
+        }`}
+      >
         £{row.cumulativeSavingsWithAppreciation.toLocaleString("en-GB", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,

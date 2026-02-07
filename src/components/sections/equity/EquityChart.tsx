@@ -21,7 +21,7 @@ export default function EquityChart({ rows }: EquityChartProps) {
   const chartData = prepareChartData(rows);
   
   const series = [
-    { dataKey: "equityGained", stroke: "#10b981", name: "Equity Gained" },
+    { dataKey: "equityGained", stroke: "#10b981", name: "Equity Gained in Property" },
     { dataKey: "interestPaid", stroke: "#ef4444", name: "Interest Paid" },
     { dataKey: "remainingBalance", stroke: "#6366f1", name: "Remaining Balance" },
     { dataKey: "propertySoldPrice", stroke: "#f59e0b", name: "Property Sold Price" },

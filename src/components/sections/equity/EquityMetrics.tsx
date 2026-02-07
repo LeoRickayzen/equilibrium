@@ -11,7 +11,7 @@ export default function EquityMetrics({ data }: EquityMetricsProps) {
   return (
     <div className="mb-6 flex flex-wrap gap-6">
       <MetricCard
-        label="Total Equity Gained"
+        label="Total Equity Gained in Property"
         value={data.totals.equityGained}
       />
       <MetricCard

@@ -53,7 +53,7 @@ export default function EquityTable({ rows }: EquityTableProps) {
       <DataTable
         headers={[
           "Year",
-          "Equity Gained",
+          "Equity Gained in Property",
           "Interest Paid",
           "Remaining Balance",
           "Property Sold Price",

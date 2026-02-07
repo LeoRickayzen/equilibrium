@@ -16,7 +16,7 @@ export default function EquitySection({
   viewMode,
 }: EquitySectionProps) {
   return (
-    <SectionCard title="Equity Gained">
+    <SectionCard title="Equity Gained in Property">
       {data.rows.length === 0 ? (
         <p className="text-lg text-zinc-500 dark:text-zinc-500">
           Enter values to calculate

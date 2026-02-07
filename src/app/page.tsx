@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useCallback, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import type { CalculatorInputs } from "@/types/calculator";
 import { DEFAULT_INPUTS } from "@/lib/constants";
 import { getParsedInputs } from "@/lib/formUtils";
@@ -9,14 +9,15 @@ import { useCalculator } from "@/hooks/computation/useCalculator";
 import { useRenovationCostValidation } from "@/hooks/useRenovationCostValidation";
 import InputField from "@/components/InputField";
 import Results from "@/components/Results";
-import ShareLinkButton from "@/components/ShareLinkButton";
 import { calculateRenovationValueAdded, calculateFinalPropertyValue } from "@/lib/propertyValueCalculations";
 import { calculateAvailableDownPayment } from "@/lib/calculations/mortgage";
 import { formatCurrency } from "@/lib/formatting";
-import { decodeCalculatorInputs } from "@/lib/shareUrl";
+import { decodeCalculatorInputs, encodeCalculatorInputs } from "@/lib/shareUrl";
 
 function HomeContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const initialInputs = useMemo(() => {
     return decodeCalculatorInputs(searchParams) ?? undefined;
   }, [searchParams]);
@@ -25,6 +26,16 @@ function HomeContent() {
     ...DEFAULT_INPUTS,
     ...initialInputs,
   });
+
+  useEffect(() => {
+    const currentEncoded = searchParams.toString();
+    const newEncoded = encodeCalculatorInputs(inputs);
+    
+    if (currentEncoded !== newEncoded) {
+      const newUrl = `${pathname}?${newEncoded}`;
+      router.replace(newUrl, { scroll: false });
+    }
+  }, [inputs, pathname, router, searchParams]);
 
   const updateInput = useCallback(
     <K extends keyof CalculatorInputs>(
@@ -110,11 +121,10 @@ function HomeContent() {
                 This calculator is for illustrative purposes only. The numbers and calculations may be inaccurate and should not be relied upon for financial decisions. This is not financial advice or a recommendation to rent or buy a property. You should consult a qualified financial advisor before making any financial decisions. The author accepts no liability for any loss or damage resulting from the use of this tool.
               </p>
             </div>
-            <div className="mb-8 flex items-start justify-between gap-4">
+            <div className="mb-8">
               <h1 className="text-3xl font-bold text-black dark:text-zinc-50">
                 Rent or Buy
               </h1>
-              <ShareLinkButton inputs={inputs} />
             </div>
 
             <div className="space-y-6">
